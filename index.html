@@ -34,7 +34,6 @@
             <a id="fsBtn" ng-click="toggleFullscreen()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-fullscreen"></span></a>
             <a id="detailsBtn" ng-click="toggleDetails()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-option-horizontal"></span></a>
         </div>
-        <h4 class="presskeys">Press "." to advance to the next clip and "," to go to the previous clip.</h4>
     </div>
     <div id="VideoOptions" class="panel panel-default" ng-show="showOptions">
                 <div class="panel-heading">
@@ -46,6 +45,7 @@
                             <li class="list-group-item clipchoice" ng-repeat="clip in clips"><span ng-click="togglePlay($event, $index)">{{clip.title}}</span>
                             <div class="glyphicon glyphicon-remove-circle" ng-click="clipDeleted($index)" ng-if="$index !== 0">{{item}}</div>
                         </ul>
+                                <p class="presskeys">Press "." to advance to the next clip and "," to go to the previous clip.</p>
                     </div>
                     <form id="addClip" ng-submit="newClip()">
                     <div class="col-xs-12">

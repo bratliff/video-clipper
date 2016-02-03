@@ -1,14 +1,13 @@
 var videoApp = angular.module('videoApp', ['ngAnimate']);
 
-videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http', function($scope, $window, $interval, $http) {
+videoApp.controller('VideoController', ['$scope', '$compile', '$q', '$window', '$interval', '$http', function($scope, $compile, $q, $window, $interval, $http) {
     $scope.videoDisplay = document.getElementById("VideoElement");
     $scope.videoSource = $window.videoSource;
     $scope.titleDisplay = $window.titleDisplay;
     $scope.videoDescription = $window.videoDescription;
     $scope.videoPlaying = false;
     $scope.currentTime;
-    $scope.totalTime;
-    $scope.scrubTop = -1000;
+    $scope.scrubTop = -900;
     $scope.scrubLeft = -1000;
     $scope.vidHeightCenter = -1000;
     $scope.vidWidthCenter = -1000;
@@ -17,12 +16,12 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
     $scope.clips;
     $scope.keypress = false;
     $scope.vidIndex = 0;
+
     
     
     $http.get('data/clips.json').success(function(data) {
         $scope.clips = data;
-        $scope.placemarkers(); 
-    });
+    })
     
     $interval(function(){
         if(!$scope.isDragging){
@@ -34,7 +33,7 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
         }else{
             $scope.scrubLeft = document.getElementById('thumbScrubber').offsetLeft;
         }
-        $scope.updateLayout();
+        $scope.updateLayout()
     }, 100);
     
     
@@ -44,6 +43,8 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
         $scope.videoDisplay.addEventListener("timeupdate", $scope.updateTime, true);
         $scope.videoDisplay.addEventListener("loadedmetadata", $scope.updateData, true);
     }
+
+    $scope.loadTime 
     
     $scope.updateTime = function(e) {
         if(!$scope.videoDisplay.seeking){
@@ -97,13 +98,21 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
         $scope.videoDisplay.currentTime = s;
     }
 
+    $scope.markerpositions = function(startTime) {
+        var w = document.getElementById('progressMeterFull').offsetWidth;
+        var timetotal = Math.round($scope.totalTime);
+        var unit = (w / timetotal);
+        var leftPos = Math.round(startTime * unit) - 13;
+        return leftPos;
+    }
+
     $scope.placemarkers = function($event) {
+        $('.vidmarkers').empty();
+
         for (var i = 0; i < $scope.clips.length; i++) {
-           var newPin = document.createElement('img');
-            newPin.setAttribute('src','blue-pin.png');
-            newPin.setAttribute('class','pin');
-            $('.vidmarkers').append(newPin);
-            console.log($scope.clips[i]);
+            var $newPin = angular.element('<img src="blue-pin.png" class="pin clipchoice" style="left:' + $scope.markerpositions($scope.clips[i].startTime) + 'px" ng-click="togglePlay($event,' + i + ')" />');
+           $compile($newPin)($scope);
+            $('.vidmarkers').append($newPin);     
         }
     }
      
@@ -129,14 +138,12 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
     
     
     $scope.togglePlay = function(event, index) { 
+        var parenttarget = angular.element(event.target.parentNode);
 
-        var target = angular.element(event.target.parentNode);
-
-        if(target.hasClass('clipchoice') || $scope.keypress == true){
+        if(parenttarget.hasClass('clipchoice') || parenttarget.hasClass('vidmarkers') || $scope.keypress == true){
             var location;
             location = 'video/sintel_trailer-480.mp4#t=' + $scope.clips[index].startTime +
         ',' + $scope.clips[index].endTime;
-            console.log(location);
             $scope.videoSource = location;
             $scope.videoDisplay.play(); 
             $scope.vidIndex = index;
@@ -185,15 +192,16 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
         $scope.clips.splice(index, 1);
     }
     $scope.newClip = function() {
-        var clipURL = 'video/sintel_trailer-480.mp4#t=' + Math.round($scope.startTime) +
-        ',' + Math.round($scope.endTime)
-        var newObj = {'title':$scope.clipName,'location':clipURL};
+        if ($scope.endTime > $scope.totalTime) {
+            $scope.endTime = Math.round($scope.totalTime);
+        }
+        var newObj = {'title':$scope.clipName,'startTime':$scope.startTime,'endTime':$scope.endTime };
         $scope.clips.push(newObj);
+        $scope.placemarkers();
     }
     
     $scope.readKey = function(event) {
         var newIndex;
-        console.log($scope.vidIndex);
 
         if(event.charCode == 46) {
             $scope.keypress = true;
@@ -210,6 +218,25 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
             $scope.togglePlay(event, $scope.vidIndex);
         }
     }
+
+    function timeLoad() {
+      // perform some asynchronous operation, resolve or reject the promise when appropriate.
+      return $q(function(resolve, reject) {
+        setTimeout(function() {
+          if ($scope.totalTime !== 0) {
+            resolve('Time loaded');
+          } else {
+            reject('Time not loaded');
+          }
+        }, 1000);
+      });
+    }
+
+    var promise = timeLoad();
+    promise.then(function(){
+        $scope.placemarkers();
+    })
+
     
     $scope.initPlayer();
     
@@ -221,7 +248,5 @@ videoApp.filter('time', function() {
         return hh + ":" + (mm < 10 ? "0" : "") + mm + ":" + (ss < 10 ? "0" : "") + ss;
     };
 });
-
-
 
 
