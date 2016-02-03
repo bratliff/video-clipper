@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="videoApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Video Player</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="video-player.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-animate.min.js"></script>
+</head>
+<body ng-controller="VideoController" ng-keypress="readKey($event)">
+    
+    <div id="fullPlayer" class="unselectable ng-cloak" ng-mousemove="mouseMoving($event)" ng-mouseup="dragStop($event)">
+        <div class="embed-responsive embed-responsive-16by9">
+            <video id="VideoElement" ng-click="togglePlay($event)" width="100%" height="100%" src="{{videoSource}}"></video>
+            <div id="bigPlayButton" ng-click="togglePlay($event)" ng-hide="videoPlaying" class="well" style="margin-top:{{vidHeightCenter}}px;margin-left:{{vidWidthCenter}}px;"><span class="glyphicon glyphicon-play"></span></div>
+            <div id="videoTitle" ng-hide="videoPlaying">{{titleDisplay}}</div>
+        </div>
+        <div class="vidmarkers"></div>
+        <div id="progressMeterFull" ng-click="videoSeek($event)">
+            <div id="progressMeter" ng-click="videoSeek($event)" style="width:{{scrubLeft+7}}px"></div>
+        </div>
+        <div id="thumbScrubber" style="top:{{scrubTop}}px;left:{{scrubLeft-1}}px;" ng-mousedown="dragStart($event)"></div>
+        <div id="playerToolBar">
+            <a id="playBtn" ng-click="togglePlay($event)" class="btn btn-default"><span class="glyphicon glyphicon-play"></span></a>
+            <a id="muteBtn" ng-click="toggleMute()" class="btn btn-default"><span class="glyphicon glyphicon-volume-up"></span></a>
+            <span id="videoTime">{{currentTime | time}} / {{totalTime | time}}</span>
+            <a id="fsBtn" ng-click="toggleFullscreen()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-fullscreen"></span></a>
+            <a id="detailsBtn" ng-click="toggleDetails()" class="btn btn-default pull-right"><span class="glyphicon glyphicon-option-horizontal"></span></a>
+        </div>
+        <h4 class="presskeys">Press "." to advance to the next clip and "," to go to the previous clip.</h4>
+    </div>
+    <div id="VideoOptions" class="panel panel-default" ng-show="showOptions">
+                <div class="panel-heading">
+                    <h1 class="panel-title">Choose Clips</h1>
+                </div>
+                <div class="panel-body">
+                    <div class="col-xs-12">
+                        <ul class="list-group" ng-model="clips">
+                            <li class="list-group-item clipchoice" ng-repeat="clip in clips"><span ng-click="togglePlay($event, $index)">{{clip.title}}</span>
+                            <div class="glyphicon glyphicon-remove-circle" ng-click="clipDeleted($index)" ng-if="$index !== 0">{{item}}</div>
+                        </ul>
+                    </div>
+                    <form id="addClip" ng-submit="newClip()">
+                    <div class="col-xs-12">
+                        <h4>Add your own clip:</h4>
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="Enter name of clip" ng-model="clipName"></input>
+                    </div>
+                    <div class="input-group">
+                            <div class="col-xs-6">
+                                <label>Start Time</label>
+                                <input type="text" ng-model="startTime" class="time" placeholder="sec"></input>
+                            </div>
+                            <div class="col-xs-6">
+                                <label>End Time</label>
+                                <input type="text" class="time" ng-model="endTime" placeholder="sec"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" id="submit" value="Submit" class="btn btn-info" />
+                </form>
+            </div>
+    
+    <script>
+        var videoSource = "video/sintel_trailer-480.mp4";
+        var titleDisplay = "Sintel";
+        var videoDescription = "Sintel: An Awesome Movie";
+    </script>
+    
+    <script src="video-app.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,22 @@
+[
+	{
+		"title":"Full Video",
+		"location":"video/sintel_trailer-480.mp4#t=0"
+	},
+    {
+		"title":"Man in the Hut",
+		"location":"video/sintel_trailer-480.mp4#t=13,22"
+	},
+    {
+		"title":"Dragon Attack",
+		"location":"video/sintel_trailer-480.mp4#t=23,34"
+	},
+    {
+		"title":"Desert Trek",
+		"location":"video/sintel_trailer-480.mp4#t=34,41"
+	},
+    {
+		"title":"Logo",
+		"location":"video/sintel_trailer-480.mp4#t=42"
+	}
+]
