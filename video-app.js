@@ -133,8 +133,11 @@ videoApp.controller('VideoController', ['$scope', '$window', '$interval', '$http
         var target = angular.element(event.target.parentNode);
 
         if(target.hasClass('clipchoice') || $scope.keypress == true){
-            
-            $scope.videoSource = $scope.clips[index].location;
+            var location;
+            location = 'video/sintel_trailer-480.mp4#t=' + $scope.clips[index].startTime +
+        ',' + $scope.clips[index].endTime;
+            console.log(location);
+            $scope.videoSource = location;
             $scope.videoDisplay.play(); 
             $scope.vidIndex = index;
         }
