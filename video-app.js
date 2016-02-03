@@ -200,25 +200,6 @@ videoApp.controller('VideoController', ['$scope', '$compile', '$q', '$window', '
         $scope.placemarkers();
     }
     
-    $scope.readKey = function(event) {
-        var newIndex;
-
-        if(event.charCode == 46) {
-            $scope.keypress = true;
-            if($scope.vidIndex < $scope.clips.length-1 ) {
-                $scope.vidIndex++;
-            }
-            $scope.togglePlay(event, $scope.vidIndex);
-        }
-        if(event.charCode == 44) {
-            $scope.keypress = true;
-            if($scope.vidIndex !== 0) {
-               $scope.vidIndex--; 
-            } 
-            $scope.togglePlay(event, $scope.vidIndex);
-        }
-    }
-
     function timeLoad() {
       // perform some asynchronous operation, resolve or reject the promise when appropriate.
       return $q(function(resolve, reject) {

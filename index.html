@@ -45,7 +45,6 @@
                             <li class="list-group-item clipchoice" ng-repeat="clip in clips"><span ng-click="togglePlay($event, $index)">{{clip.title}}</span>
                             <div class="glyphicon glyphicon-remove-circle" ng-click="clipDeleted($index)" ng-if="$index !== 0">{{item}}</div>
                         </ul>
-                                <p class="presskeys">Press "." to advance to the next clip and "," to go to the previous clip.</p>
                     </div>
                     <form id="addClip" ng-submit="newClip()">
                     <div class="col-xs-12">
